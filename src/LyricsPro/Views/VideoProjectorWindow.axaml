@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="LyricsPro.Views.VideoProjectorWindow"
+        Title="LyricsPro — Vídeo"
+        Background="Black"
+        WindowState="FullScreen"
+        SystemDecorations="None"
+        CanResize="False"
+        Focusable="True">
+
+  <Panel Background="Black">
+    <!-- LibVLC renders directly onto this panel via HWND -->
+    <Border Name="VideoSurface" Background="Black" />
+
+    <!-- Controls overlay (shows on mouse move) -->
+    <Border Name="ControlsOverlay"
+            VerticalAlignment="Bottom"
+            Background="#CC000000"
+            Padding="20,12"
+            IsVisible="False">
+      <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+        <Button Grid.Column="0" Name="BtnPlayPause"
+                Background="#D4610A" Foreground="White"
+                Padding="12,8" CornerRadius="6" Margin="0,0,8,0">
+          <TextBlock Text="⏸" FontSize="16" />
+        </Button>
+        <Button Grid.Column="1" Name="BtnStop"
+                Background="#1E1E1E" Foreground="White"
+                Padding="12,8" CornerRadius="6" Margin="0,0,8,0">
+          <TextBlock Text="⏹" FontSize="16" />
+        </Button>
+        <TextBlock Grid.Column="2" Name="TxtTitle"
+                   FontSize="14" Foreground="#DDD"
+                   VerticalAlignment="Center" />
+        <TextBlock Grid.Column="4" Text="ESC = fechar"
+                   FontSize="12" Foreground="#555"
+                   VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+  </Panel>
+</Window>

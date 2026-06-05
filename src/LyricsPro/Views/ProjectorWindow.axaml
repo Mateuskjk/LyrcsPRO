@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LyricsPro.ViewModels"
+        xmlns:conv="using:LyricsPro.Converters"
+        x:Class="LyricsPro.Views.ProjectorWindow"
+        x:DataType="vm:ProjectorViewModel"
+        Title="LyricsPro — Projetor"
+        Background="Black"
+        WindowState="FullScreen"
+        SystemDecorations="None"
+        CanResize="False"
+        Focusable="True">
+
+  <Panel>
+    <!-- Background image -->
+    <Image Name="BgImage" Stretch="UniformToFill"
+           IsVisible="{Binding CurrentSlide.BackgroundImagePath,
+               Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+    <!-- Dark overlay -->
+    <Border Background="#8C000000" />
+
+    <!-- BLANK -->
+    <Border Background="Black" IsVisible="{Binding IsBlank}" />
+
+    <!-- Main content grid -->
+    <Grid IsVisible="{Binding !IsBlank}"
+          RowDefinitions="Auto,*,Auto"
+          ColumnDefinitions="*,Auto"
+          Margin="72,52">
+
+      <!-- ── TOP ROW: Title left  ·  Artist right ─────────── -->
+      <TextBlock Grid.Row="0" Grid.Column="0"
+                 Text="{Binding CurrentSlide.Title}"
+                 FontSize="24" FontWeight="Bold"
+                 Foreground="White"
+                 IsVisible="{Binding ShowTitle}"
+                 TextTrimming="CharacterEllipsis"
+                 VerticalAlignment="Bottom"
+                 Margin="0,0,24,0" />
+
+      <TextBlock Grid.Row="0" Grid.Column="1"
+                 Text="{Binding CurrentSlide.Subtitle}"
+                 FontSize="16" FontWeight="Light"
+                 Foreground="#D4610A"
+                 IsVisible="{Binding CurrentSlide.Subtitle,
+                     Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 VerticalAlignment="Bottom"
+                 TextAlignment="Right" />
+
+      <!-- ── CENTER: Lyric / verse ─────────────────────────── -->
+      <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+              VerticalAlignment="Center">
+        <TextBlock Text="{Binding CurrentSlide.Text}"
+                   FontSize="{Binding FontSize}"
+                   FontWeight="Medium"
+                   Foreground="White"
+                   TextWrapping="Wrap"
+                   LineHeight="{Binding FontSize,
+                       Converter={x:Static conv:FontToLineHeightConverter.Instance}}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   TextAlignment="Center" />
+      </Border>
+
+      <!-- ── BOTTOM ROW: progress right ────────────────────── -->
+      <TextBlock Grid.Row="2" Grid.Column="1"
+                 Text="{Binding ProgressText}"
+                 FontSize="15" Foreground="#444"
+                 IsVisible="{Binding ShowProgress}"
+                 VerticalAlignment="Top"
+                 TextAlignment="Right" />
+    </Grid>
+
+    <!-- ESC hint when blank -->
+    <Border VerticalAlignment="Bottom" HorizontalAlignment="Center"
+            Margin="0,0,0,20" Padding="12,6"
+            Background="#22FFFFFF" CornerRadius="20"
+            IsVisible="{Binding IsBlank}">
+      <TextBlock Text="ESC = fechar  |  ← → = navegar  |  B = tela preta"
+                 FontSize="13" Foreground="#555" />
+    </Border>
+  </Panel>
+</Window>

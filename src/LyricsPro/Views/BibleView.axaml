@@ -1,0 +1,282 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:LyricsPro.Converters"
+             x:Class="LyricsPro.Views.BibleView">
+
+  <Grid ColumnDefinitions="270,*">
+
+    <!-- ── LEFT PANEL ──────────────────────────────────────── -->
+    <Border Grid.Column="0" Background="#0D0D0D"
+            BorderBrush="#1E1E1E" BorderThickness="0,0,1,0">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+
+      <!-- Title + version selector (downloaded only) -->
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="12,10,12,6">
+        <TextBlock Grid.Column="0" Text="Bíblia"
+                   FontSize="16" FontWeight="SemiBold" Foreground="#F0F0F0"
+                   VerticalAlignment="Center" />
+        <!-- Version selector (when data available) -->
+        <ComboBox Grid.Column="1"
+                  ItemsSource="{ReflectionBinding DownloadedVersions}"
+                  SelectedItem="{ReflectionBinding Version}"
+                  Background="#1E1E1E" Foreground="#D4610A"
+                  BorderBrush="#2E2E2E" CornerRadius="6" Height="30"
+                  MinWidth="72" Margin="0,0,6,0"
+                  IsVisible="{ReflectionBinding HasData}" />
+        <!-- Toggle versions panel -->
+        <Button Grid.Column="2" Classes="NavBtn"
+                Width="30" Height="30" CornerRadius="8"
+                Command="{ReflectionBinding ToggleVersionPanelCommand}"
+                ToolTip.Tip="Gerenciar versões baixadas">
+          <PathIcon Data="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"
+                    Width="14" Height="14"
+                    Foreground="{ReflectionBinding IsVersionPanelOpen, Converter={x:Static conv:BoolToBrushConverter.BlankInstance}}" />
+        </Button>
+      </Grid>
+
+      <!-- Download panel (collapsible via toggle) -->
+      <Border Grid.Row="1" Margin="10,0,10,8"
+              IsVisible="{ReflectionBinding IsVersionPanelOpen}"
+              Background="#110D00" BorderBrush="#3A2000"
+              BorderThickness="1" CornerRadius="8" Padding="10,8">
+        <StackPanel Spacing="6">
+
+          <!-- Header row -->
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0" Text="Gerenciar Versões"
+                       FontSize="11" FontWeight="SemiBold"
+                       Foreground="#D4610A" VerticalAlignment="Center" />
+            <Button Grid.Column="1"
+                    Command="{ReflectionBinding CheckAvailableCommand}"
+                    IsEnabled="{ReflectionBinding !IsCheckingAvailable}"
+                    Background="#2A1608" Foreground="#D4610A"
+                    Padding="8,4" CornerRadius="5" FontSize="11">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <PathIcon Data="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"
+                          Width="11" Height="11" />
+                <TextBlock Text="Verificar" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </Grid>
+
+          <!-- Available versions list (after check) -->
+          <StackPanel Spacing="3"
+                      IsVisible="{ReflectionBinding AvailableVersions.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+            <ComboBox ItemsSource="{ReflectionBinding AvailableVersions}"
+                      SelectedItem="{ReflectionBinding SelectedAvailable}"
+                      HorizontalAlignment="Stretch"
+                      Background="#1E1E1E" Foreground="#F0F0F0"
+                      BorderBrush="#2E2E2E" CornerRadius="5" Height="30">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{ReflectionBinding Code}" FontSize="11"
+                               Foreground="#D4610A" FontWeight="Bold" Width="40" />
+                    <TextBlock Text="{ReflectionBinding Name}" FontSize="11"
+                               Foreground="#CCC" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Command="{ReflectionBinding DownloadSelectedCommand}"
+                    IsEnabled="{ReflectionBinding !IsDownloading}"
+                    Background="#D4610A" Foreground="White"
+                    FontSize="11" FontWeight="SemiBold"
+                    Padding="0,7" CornerRadius="5"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                <PathIcon Data="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" Width="12" Height="12" />
+                <TextBlock Text="Baixar Versão Selecionada" FontSize="11" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <!-- No versions checked yet -->
+          <TextBlock
+              IsVisible="{ReflectionBinding AvailableVersions.Count, Converter={x:Static conv:ZeroToBoolConverter.Instance}}"
+              Text="Clique em 'Verificar' para ver versões disponíveis"
+              FontSize="10" Foreground="#555" TextWrapping="Wrap" />
+
+          <!-- Status + progress -->
+          <TextBlock Text="{ReflectionBinding DownloadStatus}"
+                     FontSize="10" Foreground="#D4610A" TextWrapping="Wrap"
+                     IsVisible="{ReflectionBinding DownloadStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <ProgressBar Value="{ReflectionBinding DownloadProgress}"
+                       Maximum="{ReflectionBinding DownloadTotal}"
+                       IsVisible="{ReflectionBinding IsDownloading}"
+                       Foreground="#D4610A" Background="#1E1E1E"
+                       Height="3" CornerRadius="2" />
+
+          <!-- Downloaded versions pills -->
+          <StackPanel Orientation="Horizontal" Spacing="4"
+                      IsVisible="{ReflectionBinding DownloadedVersions.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+            <TextBlock Text="Baixadas:" FontSize="10" Foreground="#555"
+                       VerticalAlignment="Center" />
+            <ItemsControl ItemsSource="{ReflectionBinding DownloadedVersions}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="3" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="#2A1608" CornerRadius="4" Padding="5,2">
+                    <Grid ColumnDefinitions="Auto,Auto">
+                      <TextBlock Grid.Column="0" Text="{ReflectionBinding}" FontSize="10"
+                                 Foreground="#D4610A" FontWeight="Bold"
+                                 VerticalAlignment="Center" />
+                      <Button Grid.Column="1" Classes="NavBtn" Width="16" Height="16"
+                              Margin="3,0,0,0"
+                              Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteVersionCommand}"
+                              CommandParameter="{Binding}"
+                              ToolTip.Tip="Remover esta versão">
+                        <PathIcon Data="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                                  Width="8" Height="8" Foreground="#C0392B" />
+                      </Button>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <!-- Manual JSON import -->
+          <Button Background="Transparent" Foreground="#555"
+                  FontSize="10" Padding="0,3" BorderThickness="0"
+                  HorizontalAlignment="Left"
+                  Name="BtnImportBible"
+                  IsEnabled="{ReflectionBinding !IsDownloading}">
+            <TextBlock Text="Importar JSON manualmente..." />
+          </Button>
+        </StackPanel>
+      </Border>
+
+      <!-- Chapter nav -->
+      <StackPanel Grid.Row="2" IsVisible="{ReflectionBinding HasData}"
+                  Spacing="4" Margin="10,0,10,6">
+
+        <!-- ComboBox row -->
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <Button Grid.Column="0" Classes="NavBtn" Width="30" Height="30"
+                  Command="{ReflectionBinding PrevChapterCommand}">
+            <PathIcon Data="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" Width="14" Height="14" />
+          </Button>
+          <ComboBox Grid.Column="1"
+                    ItemsSource="{ReflectionBinding Chapters}"
+                    SelectedIndex="{ReflectionBinding SelectedChapterIndex}"
+                    HorizontalAlignment="Stretch" Margin="4,0"
+                    Background="#1E1E1E" Foreground="#F0F0F0"
+                    BorderBrush="#2E2E2E" CornerRadius="6" Height="30" />
+          <Button Grid.Column="2" Classes="NavBtn" Width="30" Height="30"
+                  Command="{ReflectionBinding NextChapterCommand}">
+            <PathIcon Data="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" Width="14" Height="14" />
+          </Button>
+        </Grid>
+
+      </StackPanel>
+
+      <!-- Books list -->
+      <ScrollViewer Grid.Row="4" IsVisible="{ReflectionBinding HasData}">
+        <ItemsControl ItemsSource="{ReflectionBinding Books}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Background="Transparent" BorderThickness="0"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                      Padding="0" Cursor="Hand"
+                      Command="{ReflectionBinding $parent[UserControl].DataContext.SelectBookCommand}"
+                      CommandParameter="{Binding}">
+                <Border Height="44" Padding="12,0"
+                        BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                  <Border.Transitions>
+                    <Transitions>
+                      <BrushTransition Property="Background" Duration="0:0:0.12" />
+                    </Transitions>
+                  </Border.Transitions>
+                  <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+                    <!-- Orange pill badge for abbreviation -->
+                    <Border Grid.Column="0" Background="#2A1608" CornerRadius="6"
+                            Padding="6,3" Margin="0,0,10,0" MinWidth="38"
+                            HorizontalAlignment="Left">
+                      <TextBlock Text="{ReflectionBinding Abbrev}"
+                                 FontSize="10" FontWeight="Bold"
+                                 Foreground="#D4610A"
+                                 HorizontalAlignment="Center" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{ReflectionBinding Name}"
+                               FontSize="12" Foreground="#DDD"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" />
+                  </Grid>
+                </Border>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <!-- Empty state -->
+      <StackPanel Grid.Row="4"
+                  IsVisible="{ReflectionBinding !HasData}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Spacing="8" Margin="16">
+        <PathIcon Data="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"
+                  Width="40" Height="40" Foreground="#222" HorizontalAlignment="Center" />
+        <TextBlock Text="Verifique as versões disponíveis acima e baixe"
+                   Foreground="#333" FontSize="12" TextWrapping="Wrap"
+                   TextAlignment="Center" />
+      </StackPanel>
+    </Grid>
+    </Border>
+
+    <!-- ── RIGHT: Verses ─────────────────────────────────────── -->
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="24,14,24,8"
+            IsVisible="{ReflectionBinding HasData}">
+        <StackPanel Grid.Column="0">
+          <TextBlock FontSize="20" FontWeight="Bold" Foreground="#F0F0F0">
+            <Run Text="{ReflectionBinding SelectedBook.Name, FallbackValue=''}" />
+            <Run Text=" " />
+            <Run Text="{ReflectionBinding SelectedChapter}" />
+          </TextBlock>
+          <TextBlock Text="{ReflectionBinding Version, StringFormat='Versão: \{0\}'}"
+                     FontSize="12" Foreground="#666" />
+        </StackPanel>
+        <Button Grid.Column="1"
+                Background="#D4610A" Foreground="White"
+                FontWeight="SemiBold" Padding="14,8" CornerRadius="8"
+                Command="{ReflectionBinding PresentChapterCommand}"
+                VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="M8 5v14l11-7z" Width="14" Height="14" />
+            <TextBlock Text="Apresentar" FontSize="12" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+      </Grid>
+
+      <ScrollViewer Grid.Row="1" Margin="24,0,24,16"
+                    IsVisible="{ReflectionBinding HasData}">
+        <ItemsControl ItemsSource="{ReflectionBinding Verses}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Margin="0,0,0,14" TextWrapping="Wrap" LineHeight="28">
+                <Run Text="{ReflectionBinding Verse}" FontSize="10" FontWeight="Bold"
+                     Foreground="#D4610A" BaselineAlignment="Superscript" />
+                <Run Text=" " />
+                <Run Text="{ReflectionBinding Text}" FontSize="16" Foreground="#DDDDDD" />
+              </TextBlock>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <StackPanel Grid.Row="1"
+                  IsVisible="{ReflectionBinding !HasData}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+        <PathIcon Data="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"
+                  Width="64" Height="64" Foreground="#1A1A1A" HorizontalAlignment="Center" />
+        <TextBlock Text="Baixe uma versão para começar a ler"
+                   Foreground="#333" FontSize="14" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</UserControl>

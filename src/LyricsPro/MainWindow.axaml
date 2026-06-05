@@ -1,0 +1,263 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LyricsPro.ViewModels"
+        xmlns:v="using:LyricsPro.Views"
+        xmlns:m="using:LyricsPro.Models"
+        xmlns:conv="using:LyricsPro.Converters"
+        x:Class="LyricsPro.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="LyricsPro"
+        Icon="avares://LyricsPro/Assets/logo.png"
+        Width="1100" Height="720"
+        MinWidth="800" MinHeight="560"
+        Background="#111111"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="BorderOnly">
+
+  <Window.DataContext>
+    <vm:MainViewModel />
+  </Window.DataContext>
+
+  <Grid ColumnDefinitions="64,*">
+
+    <!-- ══ SIDEBAR ═══════════════════════════════════════════ -->
+    <Border Grid.Column="0" Background="#0A0A0A"
+            BorderBrush="#1E1E1E" BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Logo -->
+        <Border Grid.Row="0" Margin="0,16,0,8" HorizontalAlignment="Center">
+          <Panel Width="36" Height="36">
+            <Ellipse Fill="#D4610A" />
+            <TextBlock Text="♪" FontSize="18" FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+          </Panel>
+        </Border>
+
+        <!-- Nav icons -->
+        <StackPanel Grid.Row="1" Orientation="Vertical" Spacing="4" Margin="6,12,6,0">
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Home}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Home}"
+                  ToolTip.Tip="Início">
+            <PathIcon Data="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" Width="22" Height="22" />
+          </Button>
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Search}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Search}"
+                  ToolTip.Tip="Buscar Letras na Internet">
+            <PathIcon Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                      Width="22" Height="22" />
+          </Button>
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Live}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Live}"
+                  ToolTip.Tip="Controle do Projetor">
+            <PathIcon Data="M8 5v14l11-7z" Width="22" Height="22" />
+          </Button>
+
+          <Rectangle Height="1" Margin="8,6" Fill="#222222" />
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Lyrics}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Lyrics}"
+                  ToolTip.Tip="Letras Salvas">
+            <PathIcon Data="M3 18h12v-2H3v2zm0-5h12v-2H3v2zm0-7v2h12V6H3zm13 9.67V6.34L21.46 12 16 15.67z"
+                      Width="22" Height="22" />
+          </Button>
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Media}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Media}"
+                  ToolTip.Tip="Mídia (Áudio/Vídeo/Imagens)">
+            <PathIcon Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                      Width="22" Height="22" />
+          </Button>
+
+          <Button Classes="NavBtn"
+                  Classes.Active="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Bible}"
+                  Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:NavSection.Bible}"
+                  ToolTip.Tip="Bíblia">
+            <PathIcon Data="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"
+                      Width="22" Height="22" />
+          </Button>
+        </StackPanel>
+
+        <!-- Settings -->
+        <StackPanel Grid.Row="2" Margin="6,0,6,16" Spacing="4">
+          <Rectangle Height="1" Margin="8,0,8,4" Fill="#222222" />
+          <Button Classes="NavBtn" ToolTip.Tip="Configurações">
+            <PathIcon Data="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"
+                      Width="20" Height="20" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ══ MAIN CONTENT ═══════════════════════════════════════ -->
+    <Grid Grid.Column="1" RowDefinitions="44,*">
+
+      <!-- Title bar -->
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto"
+            Background="#111111"
+            Name="TitleBar">
+        <!-- Section title -->
+        <TextBlock Grid.Column="0"
+                   Text="{Binding ActiveSection, Converter={x:Static conv:SectionTitleConverter.Instance}}"
+                   FontSize="13" FontWeight="Medium" Foreground="#555"
+                   VerticalAlignment="Center" Margin="20,0,0,0" />
+
+        <!-- Window controls -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4"
+                    VerticalAlignment="Center" Margin="0,0,8,0">
+          <Button Classes="NavBtn" Width="30" Height="30" CornerRadius="6"
+                  Click="OnMinimize" ToolTip.Tip="Minimizar">
+            <Rectangle Width="10" Height="1.5" Fill="#666" />
+          </Button>
+          <Button Classes="NavBtn" Width="30" Height="30" CornerRadius="6"
+                  Click="OnMaximize" ToolTip.Tip="Maximizar">
+            <Rectangle Width="10" Height="10" Stroke="#666" StrokeThickness="1.5" Fill="Transparent" />
+          </Button>
+          <Button Classes="NavBtn" Width="30" Height="30" CornerRadius="6"
+                  Click="OnClose" ToolTip.Tip="Fechar">
+            <PathIcon Data="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                      Width="12" Height="12" Foreground="#666" />
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <!-- View switcher -->
+      <Panel Grid.Row="1">
+
+        <!-- HOME -->
+        <Grid IsVisible="{Binding ActiveSection, Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Home}"
+              RowDefinitions="*,Auto">
+
+          <ScrollViewer Grid.Row="0" Margin="24,8,24,0">
+            <StackPanel Spacing="20">
+              <TextBlock Text="Bem-vindo ao LyricsPro" FontSize="22" FontWeight="Bold" Foreground="#F0F0F0" />
+
+              <!-- Section header with orange left accent -->
+              <Border BorderBrush="#D4610A" BorderThickness="3,0,0,0" Padding="10,0,0,0">
+                <TextBlock Text="Letras recentes" FontSize="14" FontWeight="SemiBold" Foreground="#888" />
+              </Border>
+
+              <!-- Empty home state -->
+              <StackPanel IsVisible="{Binding RecentLyrics.Count, Converter={x:Static conv:ZeroToBoolConverter.Instance}}"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,80">
+                <PathIcon Data="M3 18h12v-2H3v2zm0-5h12v-2H3v2zm0-7v2h12V6H3zm13 9.67V6.34L21.46 12 16 15.67z"
+                          Width="56" Height="56" Foreground="#222" HorizontalAlignment="Center" />
+                <TextBlock Text="Nenhuma letra salva ainda." Foreground="#333" FontSize="14" HorizontalAlignment="Center" />
+                <TextBlock Text="Use a busca (🔍) para importar letras da internet." Foreground="#333" FontSize="12" HorizontalAlignment="Center" />
+              </StackPanel>
+
+              <!-- Recent items grid -->
+              <ItemsControl ItemsSource="{Binding RecentLyrics}"
+                            IsVisible="{Binding RecentLyrics.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Width="200" Height="130" Margin="0,0,12,12"
+                            Background="Transparent" BorderThickness="0" Padding="0"
+                            Cursor="Hand"
+                            Classes="ThumbCard"
+                            Command="{ReflectionBinding $parent[Window].DataContext.OpenLyricCommand}"
+                            CommandParameter="{Binding}">
+                      <Border CornerRadius="12" ClipToBounds="True"
+                              BorderBrush="#2A2A2A" BorderThickness="1"
+                              Width="200" Height="130">
+                        <Panel>
+                          <!-- Gradient fallback background -->
+                          <Border>
+                            <Border.Background>
+                              <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                <GradientStop Color="#1A1208" Offset="0" />
+                                <GradientStop Color="#2A1A08" Offset="1" />
+                              </LinearGradientBrush>
+                            </Border.Background>
+                          </Border>
+
+                          <!-- Background image (if set) -->
+                          <Image Source="{ReflectionBinding BackgroundImagePath, Converter={x:Static conv:PathToImageConverter.Instance}}"
+                                 Stretch="UniformToFill"
+                                 Opacity="0.75" />
+
+                          <!-- Dark overlay for readability -->
+                          <Border Background="#55000000" />
+
+                          <!-- Lyric text preview (center) -->
+                          <TextBlock Text="{ReflectionBinding LyricText}"
+                                     FontSize="10" Foreground="#BBBBBB"
+                                     TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                     MaxLines="4" LineHeight="14"
+                                     Margin="10,8,10,36"
+                                     VerticalAlignment="Top"
+                                     Opacity="0.7" />
+
+                          <!-- Title + artist overlay at bottom -->
+                          <Border VerticalAlignment="Bottom" Padding="10,16,10,8">
+                            <Border.Background>
+                              <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                                <GradientStop Color="Transparent" Offset="0" />
+                                <GradientStop Color="#EE000000" Offset="1" />
+                              </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                              <TextBlock Text="{ReflectionBinding Title}"
+                                         FontSize="12" FontWeight="SemiBold"
+                                         Foreground="White" TextTrimming="CharacterEllipsis" />
+                              <TextBlock Text="{ReflectionBinding Artist}"
+                                         FontSize="10" Foreground="#D4610A"
+                                         TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                          </Border>
+                        </Panel>
+                      </Border>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+
+        <!-- SEARCH -->
+        <v:SearchView Name="SearchView"
+            IsVisible="{ReflectionBinding $parent[Window].DataContext.ActiveSection,
+                Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Search}" />
+
+        <!-- LYRICS -->
+        <v:LyricsView Name="LyricsView"
+            IsVisible="{ReflectionBinding $parent[Window].DataContext.ActiveSection,
+                Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Lyrics}" />
+
+        <!-- MEDIA -->
+        <v:MediaView Name="MediaView"
+            IsVisible="{ReflectionBinding $parent[Window].DataContext.ActiveSection,
+                Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Media}" />
+
+        <!-- BIBLE -->
+        <v:BibleView Name="BibleView"
+            IsVisible="{ReflectionBinding $parent[Window].DataContext.ActiveSection,
+                Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Bible}" />
+
+        <!-- LIVE / PROJETOR CONTROL -->
+        <v:PresenterControlView Name="LiveView"
+            IsVisible="{ReflectionBinding $parent[Window].DataContext.ActiveSection,
+                Converter={x:Static conv:EnumToBoolConverter.Instance}, ConverterParameter=Live}" />
+
+      </Panel>
+    </Grid>
+  </Grid>
+</Window>

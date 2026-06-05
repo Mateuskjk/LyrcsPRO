@@ -1,0 +1,155 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ─── Color Palette ─────────────────────────────────────── -->
+  <Style>
+    <Style.Resources>
+      <Color x:Key="BgDeep">#0A0A0A</Color>
+      <Color x:Key="BgBase">#111111</Color>
+      <Color x:Key="BgCard">#1A1A1A</Color>
+      <Color x:Key="BgHover">#242424</Color>
+      <Color x:Key="BgSelected">#2A1A08</Color>
+      <Color x:Key="AccentOrange">#D4610A</Color>
+      <Color x:Key="AccentOrangeLight">#E87820</Color>
+      <Color x:Key="AccentOrangeDim">#8B3F07</Color>
+      <Color x:Key="TextPrimary">#F0F0F0</Color>
+      <Color x:Key="TextSecondary">#888888</Color>
+      <Color x:Key="TextMuted">#505050</Color>
+      <Color x:Key="Separator">#222222</Color>
+
+      <SolidColorBrush x:Key="BrushBgDeep" Color="{StaticResource BgDeep}" />
+      <SolidColorBrush x:Key="BrushBgBase" Color="{StaticResource BgBase}" />
+      <SolidColorBrush x:Key="BrushBgCard" Color="{StaticResource BgCard}" />
+      <SolidColorBrush x:Key="BrushBgHover" Color="{StaticResource BgHover}" />
+      <SolidColorBrush x:Key="BrushBgSelected" Color="{StaticResource BgSelected}" />
+      <SolidColorBrush x:Key="BrushAccent" Color="{StaticResource AccentOrange}" />
+      <SolidColorBrush x:Key="BrushAccentLight" Color="{StaticResource AccentOrangeLight}" />
+      <SolidColorBrush x:Key="BrushAccentDim" Color="{StaticResource AccentOrangeDim}" />
+      <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource TextPrimary}" />
+      <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource TextSecondary}" />
+      <SolidColorBrush x:Key="BrushTextMuted" Color="{StaticResource TextMuted}" />
+      <SolidColorBrush x:Key="BrushSeparator" Color="{StaticResource Separator}" />
+    </Style.Resources>
+  </Style>
+
+  <!-- ─── Window ────────────────────────────────────────────── -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{StaticResource BrushBgBase}" />
+    <Setter Property="FontFamily" Value="Inter,Segoe UI,sans-serif" />
+    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+  </Style>
+
+  <!-- ─── Sidebar nav button ────────────────────────────────── -->
+  <Style Selector="Button.NavBtn">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+    <Setter Property="Width" Value="52" />
+    <Setter Property="Height" Value="52" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.NavBtn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BrushBgHover}" />
+  </Style>
+  <Style Selector="Button.NavBtn.Active">
+    <Setter Property="Background" Value="{StaticResource BrushBgSelected}" />
+    <Setter Property="Foreground" Value="{StaticResource BrushAccentLight}" />
+  </Style>
+  <Style Selector="Button.NavBtn.Active /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BrushBgSelected}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}" />
+    <Setter Property="BorderThickness" Value="3,0,0,0" />
+  </Style>
+
+  <!-- ─── Search box ────────────────────────────────────────── -->
+  <Style Selector="TextBox.SearchBox">
+    <Setter Property="Background" Value="#1E1E1E" />
+    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+    <Setter Property="BorderBrush" Value="#2E2E2E" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="22" />
+    <Setter Property="Height" Value="42" />
+    <Setter Property="Padding" Value="16,0,16,0" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="CaretBrush" Value="{StaticResource BrushAccentLight}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="TextBox.SearchBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}" />
+    <Setter Property="BorderThickness" Value="1.5" />
+    <Setter Property="BoxShadow" Value="0 0 0 2 #40D4610A" />
+  </Style>
+
+  <!-- ─── Generic TextBox focus ring ──────────────────────── -->
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}" />
+    <Setter Property="BoxShadow" Value="0 0 0 2 #33D4610A" />
+  </Style>
+
+  <!-- ─── List item hover ──────────────────────────────────── -->
+  <Style Selector="Button.ListItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.ListItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#1E1E1E" />
+  </Style>
+
+  <!-- ─── Thumbnail card ────────────────────────────────────── -->
+  <Style Selector="Button.ThumbCard">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.ThumbCard:pointerover /template/ ContentPresenter">
+    <Setter Property="Opacity" Value="0.85" />
+  </Style>
+
+  <!-- ─── Scrollbar slim ────────────────────────────────────── -->
+  <Style Selector="ScrollBar">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Opacity" Value="0.6" />
+  </Style>
+  <Style Selector="ScrollBar /template/ Thumb">
+    <Setter Property="Background" Value="#4DD4610A" />
+    <Setter Property="MinHeight" Value="24" />
+    <Setter Property="MinWidth" Value="4" />
+    <Setter Property="CornerRadius" Value="2" />
+  </Style>
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Width" Value="4" />
+  </Style>
+  <Style Selector="ScrollBar:horizontal">
+    <Setter Property="Height" Value="4" />
+  </Style>
+</Styles>

@@ -1,0 +1,134 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LyricsPro.Views.SearchView">
+
+  <Grid ColumnDefinitions="340,*" Margin="16">
+
+    <!-- ── LEFT ──────────────────────────────────────────── -->
+    <Border Grid.Column="0" Background="#0D0D0D"
+            BorderBrush="#1E1E1E" BorderThickness="0,0,1,0">
+    <Grid RowDefinitions="Auto,Auto,*">
+
+      <!-- Header with accent -->
+      <Border Grid.Row="0" BorderBrush="#D4610A" BorderThickness="3,0,0,0"
+              Padding="12,0,0,0" Margin="0,16,16,12">
+        <TextBlock Text="Buscar na Internet"
+                   FontSize="16" FontWeight="SemiBold" Foreground="#F0F0F0" />
+      </Border>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="12,0,12,10">
+        <TextBox Grid.Column="0"
+                 Classes="SearchBox"
+                 CornerRadius="8,0,0,8"
+                 Watermark="Ex: Oceans Hillsong..."
+                 Text="{ReflectionBinding SearchQuery}">
+          <TextBox.KeyBindings>
+            <KeyBinding Gesture="Return" Command="{ReflectionBinding SearchInternetCommand}" />
+          </TextBox.KeyBindings>
+        </TextBox>
+        <Button Grid.Column="1"
+                Command="{ReflectionBinding SearchInternetCommand}"
+                IsEnabled="{ReflectionBinding !IsSearching}"
+                Background="#D4610A" Foreground="White"
+                Height="42" Padding="16,0" CornerRadius="0,8,8,0">
+          <PathIcon Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                    Width="16" Height="16" />
+        </Button>
+      </Grid>
+
+      <Grid Grid.Row="2" RowDefinitions="Auto,Auto,*">
+        <TextBlock Grid.Row="0"
+                   Text="{ReflectionBinding SearchStatus}"
+                   FontSize="12" Foreground="#D4610A" Margin="14,4,14,4"
+                   IsVisible="{ReflectionBinding SearchStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+        <ProgressBar Grid.Row="1"
+                     IsIndeterminate="True"
+                     IsVisible="{ReflectionBinding IsSearching}"
+                     Foreground="#D4610A" Background="#1E1E1E"
+                     Height="2" Margin="0,0,0,2" />
+
+        <ScrollViewer Grid.Row="2">
+          <ItemsControl ItemsSource="{ReflectionBinding SearchResults}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Button Background="Transparent" BorderThickness="0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Padding="0" Cursor="Hand"
+                        Command="{ReflectionBinding $parent[UserControl].DataContext.FetchResultCommand}"
+                        CommandParameter="{Binding}">
+                  <Border MinHeight="56" Padding="14,10"
+                          BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                    <Border.Transitions>
+                      <Transitions>
+                        <BrushTransition Property="Background" Duration="0:0:0.12" />
+                      </Transitions>
+                    </Border.Transitions>
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="{ReflectionBinding Title}"
+                                 FontSize="13" FontWeight="Medium"
+                                 Foreground="#F0F0F0" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{ReflectionBinding Artist}"
+                                 FontSize="11" Foreground="#888" Margin="0,2,0,0" />
+                    </StackPanel>
+                  </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Grid>
+    </Border>
+
+    <!-- ── RIGHT ─────────────────────────────────────────── -->
+    <Grid Grid.Column="1" RowDefinitions="*,Auto" Margin="28,0,0,0">
+
+      <StackPanel Grid.Row="0"
+                  IsVisible="{ReflectionBinding !HasFetched}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+        <PathIcon Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                  Width="48" Height="48" Foreground="#2A2A2A" HorizontalAlignment="Center" />
+        <TextBlock Text="Selecione um resultado para ver a letra"
+                   Foreground="#444" FontSize="14" HorizontalAlignment="Center" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="0" IsVisible="{ReflectionBinding HasFetched}">
+        <StackPanel Spacing="16">
+          <!-- Title field — bottom border only style -->
+          <TextBox Text="{ReflectionBinding FetchedTitle}"
+                   FontSize="22" FontWeight="Bold" Foreground="#F0F0F0"
+                   Background="Transparent"
+                   BorderThickness="0,0,0,2" BorderBrush="#D4610A"
+                   Padding="0,0,0,10"
+                   CaretBrush="#D4610A" />
+
+          <!-- Artist field — bottom border only style -->
+          <TextBox Text="{ReflectionBinding FetchedArtist}"
+                   FontSize="14" Foreground="#D4610A"
+                   Background="Transparent"
+                   BorderThickness="0,0,0,1" BorderBrush="#2A2A2A"
+                   Padding="0,0,0,8"
+                   CaretBrush="#D4610A" />
+
+          <TextBlock Text="{ReflectionBinding FetchedText}"
+                     FontSize="14" LineHeight="28"
+                     Foreground="#CCCCCC" TextWrapping="Wrap" />
+        </StackPanel>
+      </ScrollViewer>
+
+      <StackPanel Grid.Row="1"
+                  IsVisible="{ReflectionBinding HasFetched}"
+                  Orientation="Horizontal" Spacing="10"
+                  HorizontalAlignment="Right" Margin="0,12,0,0">
+        <TextBlock Text="Edite o título/artista se necessário, depois:"
+                   Foreground="#555" FontSize="12" VerticalAlignment="Center" />
+        <Button Content="Importar para Biblioteca"
+                Command="{ReflectionBinding ImportFetchedCommand}"
+                Background="#D4610A" Foreground="White"
+                FontWeight="SemiBold" Padding="20,11" CornerRadius="8" FontSize="13" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</UserControl>

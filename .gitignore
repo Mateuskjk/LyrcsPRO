@@ -1,0 +1,23 @@
+# .NET / Build
+bin/
+obj/
+publish/
+*.user
+*.suo
+.vs/
+.idea/
+
+# Inno Setup output
+installer/output/
+
+# User data (banco de dados local — não sobe pro repo)
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

@@ -1,0 +1,278 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:LyricsPro.Converters"
+             x:Class="LyricsPro.Views.MediaView">
+
+  <Grid RowDefinitions="Auto,Auto,*">
+
+    <!-- ── PLAYER BAR ─────────────────────────────────────────── -->
+    <Border Grid.Row="0"
+            IsVisible="{ReflectionBinding IsPlaying}"
+            Background="#1A0D00" BorderBrush="#D4610A"
+            BorderThickness="0,0,0,1" Padding="16,8">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+        <PathIcon Grid.Column="0"
+                  Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                  Width="18" Height="18" Foreground="#D4610A" Margin="0,0,10,0" />
+        <TextBlock Grid.Column="1"
+                   Text="{ReflectionBinding NowPlaying}"
+                   FontSize="13" FontWeight="SemiBold"
+                   Foreground="#F0F0F0" VerticalAlignment="Center"
+                   TextTrimming="CharacterEllipsis" />
+        <!-- Volume -->
+        <Slider Grid.Column="2"
+                Value="{ReflectionBinding Volume}"
+                Minimum="0" Maximum="1"
+                Width="80" Margin="12,0"
+                VerticalAlignment="Center"
+                ToolTip.Tip="Volume" />
+        <!-- Pause/Resume -->
+        <Button Grid.Column="3" Classes="NavBtn"
+                Width="34" Height="34" Margin="0,0,4,0"
+                Command="{ReflectionBinding TogglePlayPauseCommand}"
+                ToolTip.Tip="Pausar / Retomar">
+          <PathIcon Data="M6 19h4V5H6v14zm8-14v14h4V5h-4z" Width="15" Height="15" />
+        </Button>
+        <!-- Stop -->
+        <Button Grid.Column="4" Classes="NavBtn"
+                Width="34" Height="34"
+                Command="{ReflectionBinding StopAudioCommand}"
+                ToolTip.Tip="Parar">
+          <PathIcon Data="M6 6h12v12H6z" Width="14" Height="14" Foreground="#C0392B" />
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- ── TAB BAR ────────────────────────────────────────────── -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="20,12,20,0">
+      <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+        <Button Padding="14,9" Width="NaN" Height="NaN" CornerRadius="8"
+                Background="#1E1E1E" Foreground="#F0F0F0" Name="BtnAudio">
+          <StackPanel Orientation="Horizontal" Spacing="7">
+            <PathIcon Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" Width="15" Height="15" />
+            <TextBlock Text="Áudios" FontSize="13" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+        <Button Padding="14,9" Width="NaN" Height="NaN" CornerRadius="8"
+                Background="#1E1E1E" Foreground="#F0F0F0" Name="BtnVideo">
+          <StackPanel Orientation="Horizontal" Spacing="7">
+            <PathIcon Data="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" Width="15" Height="15" />
+            <TextBlock Text="Vídeos" FontSize="13" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+        <Button Padding="14,9" Width="NaN" Height="NaN" CornerRadius="8"
+                Background="#1E1E1E" Foreground="#F0F0F0" Name="BtnImages">
+          <StackPanel Orientation="Horizontal" Spacing="7">
+            <PathIcon Data="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" Width="15" Height="15" />
+            <TextBlock Text="Imagens" FontSize="13" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+
+      <Button Grid.Column="1" Background="#D4610A" Foreground="White"
+              FontWeight="SemiBold" Padding="16,9" Height="NaN" CornerRadius="8"
+              Name="BtnImport">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <PathIcon Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" Width="15" Height="15" />
+          <TextBlock Text="Adicionar Arquivos" FontSize="13" VerticalAlignment="Center" />
+        </StackPanel>
+      </Button>
+    </Grid>
+
+    <!-- ── PANELS ─────────────────────────────────────────────── -->
+    <Grid Grid.Row="2" Margin="20,10,20,0">
+
+      <!-- ÁUDIOS -->
+      <Grid Name="PanelAudio">
+        <StackPanel IsVisible="{ReflectionBinding AudioItems.Count, Converter={x:Static conv:ZeroToBoolConverter.Instance}}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <PathIcon Data="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                    Width="48" Height="48" Foreground="#2A2A2A" HorizontalAlignment="Center" />
+          <TextBlock Text="Nenhum áudio. Clique em + Adicionar Arquivos"
+                     Foreground="#444" FontSize="14" HorizontalAlignment="Center" />
+        </StackPanel>
+        <ScrollViewer IsVisible="{ReflectionBinding AudioItems.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+          <ItemsControl ItemsSource="{ReflectionBinding AudioItems}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Margin="0,0,0,3"
+                        Background="#1A1A1A" CornerRadius="8"
+                        MinHeight="60" ClipToBounds="True">
+                  <Grid ColumnDefinitions="4,Auto,*,Auto,Auto,Auto">
+                    <!-- Audio type stripe (green-teal) -->
+                    <Border Grid.Column="0" Background="#1DB954" CornerRadius="8,0,0,8" />
+                    <!-- Play -->
+                    <Button Grid.Column="1" Classes="NavBtn"
+                            Width="36" Height="36" Margin="10,0,10,0"
+                            Background="#D4610A"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.PlayAudioCommand}"
+                            CommandParameter="{Binding}"
+                            ToolTip.Tip="Reproduzir">
+                      <PathIcon Data="M8 5v14l11-7z" Width="15" Height="15" Foreground="White" />
+                    </Button>
+                    <!-- Info -->
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,12">
+                      <TextBlock Text="{ReflectionBinding Title}"
+                                 FontSize="13" FontWeight="Medium"
+                                 Foreground="#F0F0F0" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{ReflectionBinding FilePath}"
+                                 FontSize="10" Foreground="#555" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <!-- Rename -->
+                    <Button Grid.Column="3" Classes="NavBtn" Width="30" Height="30"
+                            Margin="4,0,0,0"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.StartRenamingCommand}"
+                            CommandParameter="{Binding}" ToolTip.Tip="Renomear">
+                      <PathIcon Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                                Width="12" Height="12" />
+                    </Button>
+                    <!-- Delete -->
+                    <Button Grid.Column="4" Classes="NavBtn" Width="30" Height="30"
+                            Margin="4,0,8,0"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteMediaCommand}"
+                            CommandParameter="{Binding}" ToolTip.Tip="Remover">
+                      <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                Width="13" Height="13" Foreground="#C0392B" />
+                    </Button>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- VÍDEOS -->
+      <Grid Name="PanelVideo" IsVisible="False">
+        <StackPanel IsVisible="{ReflectionBinding VideoItems.Count, Converter={x:Static conv:ZeroToBoolConverter.Instance}}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <PathIcon Data="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"
+                    Width="48" Height="48" Foreground="#2A2A2A" HorizontalAlignment="Center" />
+          <TextBlock Text="Nenhum vídeo. Clique em + Adicionar Arquivos"
+                     Foreground="#444" FontSize="14" HorizontalAlignment="Center" />
+        </StackPanel>
+        <ScrollViewer IsVisible="{ReflectionBinding VideoItems.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+          <ItemsControl ItemsSource="{ReflectionBinding VideoItems}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Margin="0,0,0,3"
+                        Background="#1A1A1A" CornerRadius="8"
+                        MinHeight="60" ClipToBounds="True">
+                  <Grid ColumnDefinitions="4,Auto,*,Auto,Auto,Auto">
+                    <!-- Video type stripe (blue) -->
+                    <Border Grid.Column="0" Background="#2979FF" CornerRadius="8,0,0,8" />
+                    <Button Grid.Column="1" Classes="NavBtn"
+                            Width="36" Height="36" Margin="10,0,10,0"
+                            Background="#D4610A"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.PlayVideoCommand}"
+                            CommandParameter="{Binding}" ToolTip.Tip="Reproduzir">
+                      <PathIcon Data="M8 5v14l11-7z" Width="15" Height="15" Foreground="White" />
+                    </Button>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,12">
+                      <TextBlock Text="{ReflectionBinding Title}"
+                                 FontSize="13" FontWeight="Medium"
+                                 Foreground="#F0F0F0" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{ReflectionBinding FilePath}"
+                                 FontSize="10" Foreground="#555" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <Button Grid.Column="3" Classes="NavBtn" Width="30" Height="30"
+                            Margin="4,0,0,0"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.StartRenamingCommand}"
+                            CommandParameter="{Binding}" ToolTip.Tip="Renomear">
+                      <PathIcon Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                                Width="12" Height="12" />
+                    </Button>
+                    <Button Grid.Column="4" Classes="NavBtn" Width="30" Height="30"
+                            Margin="4,0,8,0"
+                            Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteMediaCommand}"
+                            CommandParameter="{Binding}" ToolTip.Tip="Remover">
+                      <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                Width="13" Height="13" Foreground="#C0392B" />
+                    </Button>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- IMAGENS -->
+      <Grid Name="PanelImages" IsVisible="False">
+        <StackPanel IsVisible="{ReflectionBinding ImageItems.Count, Converter={x:Static conv:ZeroToBoolConverter.Instance}}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <PathIcon Data="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                    Width="48" Height="48" Foreground="#2A2A2A" HorizontalAlignment="Center" />
+          <TextBlock Text="Nenhuma imagem. Clique em + Adicionar Arquivos"
+                     Foreground="#444" FontSize="14" HorizontalAlignment="Center" />
+        </StackPanel>
+        <ScrollViewer IsVisible="{ReflectionBinding ImageItems.Count, Converter={x:Static conv:NonZeroToBoolConverter.Instance}}">
+          <ItemsControl ItemsSource="{ReflectionBinding ImageItems}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Width="170" Height="120" Margin="0,0,12,12"
+                        CornerRadius="12" ClipToBounds="True"
+                        Background="#1A1A1A"
+                        BorderBrush="#2A2A2A" BorderThickness="1"
+                        BoxShadow="0 4px 12px 0 #66000000">
+                  <Panel>
+                    <Image Source="{ReflectionBinding FilePath, Converter={x:Static conv:PathToImageConverter.Instance}}"
+                           Stretch="UniformToFill" />
+                    <!-- Hover overlay with buttons -->
+                    <Border Background="#99000000" CornerRadius="10">
+                      <Grid RowDefinitions="*,Auto">
+                        <!-- Present button center -->
+                        <Button Grid.Row="0"
+                                Background="#CC000000"
+                                BorderThickness="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="12,8" CornerRadius="8"
+                                Command="{ReflectionBinding $parent[UserControl].DataContext.PresentImageCommand}"
+                                CommandParameter="{Binding}"
+                                ToolTip.Tip="Apresentar no Projetor">
+                          <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon Data="M8 5v14l11-7z" Width="14" Height="14" Foreground="White" />
+                            <TextBlock Text="Apresentar" FontSize="11" Foreground="White"
+                                       VerticalAlignment="Center" />
+                          </StackPanel>
+                        </Button>
+                        <!-- Title + delete -->
+                        <Border Grid.Row="1" Padding="8,5"
+                                Background="#DD000000">
+                          <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBlock Grid.Column="0" Text="{ReflectionBinding Title}"
+                                       FontSize="10" Foreground="White"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Classes="NavBtn"
+                                    Width="22" Height="22" Margin="4,0,2,0"
+                                    Command="{ReflectionBinding $parent[UserControl].DataContext.StartRenamingCommand}"
+                                    CommandParameter="{Binding}">
+                              <PathIcon Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                                        Width="10" Height="10" />
+                            </Button>
+                            <Button Grid.Column="2" Classes="NavBtn"
+                                    Width="22" Height="22"
+                                    Command="{ReflectionBinding $parent[UserControl].DataContext.DeleteMediaCommand}"
+                                    CommandParameter="{Binding}">
+                              <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                        Width="10" Height="10" Foreground="#C0392B" />
+                            </Button>
+                          </Grid>
+                        </Border>
+                      </Grid>
+                    </Border>
+                  </Panel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

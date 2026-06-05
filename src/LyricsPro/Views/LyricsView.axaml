@@ -1,0 +1,231 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:LyricsPro.Converters"
+             x:Class="LyricsPro.Views.LyricsView">
+
+  <Grid ColumnDefinitions="300,*">
+
+    <!-- ── LEFT: Library list ─────────────────────────── -->
+    <Border Grid.Column="0" Background="#0D0D0D"
+            BorderBrush="#1E1E1E" BorderThickness="0,0,1,0">
+    <Grid RowDefinitions="Auto,Auto,*">
+
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="16,16,16,8">
+        <TextBlock Grid.Column="0" Text="Letras Salvas"
+                   FontSize="16" FontWeight="SemiBold" Foreground="#F0F0F0"
+                   VerticalAlignment="Center" />
+        <Button Grid.Column="1" Classes="NavBtn"
+                Width="34" Height="34" CornerRadius="8"
+                Background="#D4610A"
+                Command="{ReflectionBinding NewLyricCommand}"
+                ToolTip.Tip="Nova Letra">
+          <PathIcon Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                    Width="16" Height="16" Foreground="White" />
+        </Button>
+      </Grid>
+
+      <TextBox Grid.Row="1" Classes="SearchBox"
+               Watermark="Filtrar letras..."
+               Text="{ReflectionBinding LibrarySearch}"
+               Margin="12,0,12,8" />
+
+      <ScrollViewer Grid.Row="2">
+        <ItemsControl ItemsSource="{ReflectionBinding Lyrics}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Background="Transparent" BorderThickness="0"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
+                      Padding="0" Cursor="Hand"
+                      Command="{ReflectionBinding $parent[UserControl].DataContext.SelectLyricCommand}"
+                      CommandParameter="{Binding}">
+                <Border Height="68" ClipToBounds="True"
+                        BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                  <Panel>
+                    <!-- Hover background -->
+                    <Border Name="HoverBg" Background="Transparent">
+                      <Border.Transitions>
+                        <Transitions>
+                          <BrushTransition Property="Background" Duration="0:0:0.12" />
+                        </Transitions>
+                      </Border.Transitions>
+                    </Border>
+                    <!-- Background image preview -->
+                    <Image Source="{ReflectionBinding BackgroundImagePath, Converter={x:Static conv:PathToImageConverter.Instance}}"
+                           Stretch="UniformToFill" Opacity="0.2" />
+                    <!-- Gradient -->
+                    <Border>
+                      <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                          <GradientStop Color="#1A1A1A" Offset="0" />
+                          <GradientStop Color="Transparent" Offset="1" />
+                        </LinearGradientBrush>
+                      </Border.Background>
+                    </Border>
+                    <!-- Orange selection dot + text -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,8">
+                      <!-- Orange dot on selected (always visible as accent color indicator) -->
+                      <Ellipse Grid.Column="0" Width="6" Height="6"
+                               Fill="#D4610A" Margin="0,0,10,0"
+                               VerticalAlignment="Center" Opacity="0.5" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{ReflectionBinding Title}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="#F0F0F0" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{ReflectionBinding Artist}"
+                                   FontSize="11" Foreground="#D4610A"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{ReflectionBinding LyricText}"
+                                   FontSize="10" Foreground="#555"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxLines="1" />
+                      </StackPanel>
+                    </Grid>
+                  </Panel>
+                </Border>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Grid>
+    </Border>
+
+    <!-- ── RIGHT: View / Edit ─────────────────────────── -->
+    <Grid Grid.Column="1" RowDefinitions="*,Auto" Margin="28,20,28,16">
+
+      <!-- View mode -->
+      <ScrollViewer Grid.Row="0" IsVisible="{ReflectionBinding !IsEditing}">
+        <StackPanel Spacing="16">
+
+          <StackPanel IsVisible="{ReflectionBinding SelectedLyric, Converter={x:Static ObjectConverters.IsNull}}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Spacing="12" Margin="0,80">
+            <PathIcon Data="M3 18h12v-2H3v2zm0-5h12v-2H3v2zm0-7v2h12V6H3zm13 9.67V6.34L21.46 12 16 15.67z"
+                      Width="48" Height="48" Foreground="#2A2A2A" HorizontalAlignment="Center" />
+            <TextBlock Text="Selecione uma letra ou crie uma nova"
+                       Foreground="#444" FontSize="14" HorizontalAlignment="Center" />
+          </StackPanel>
+
+          <StackPanel IsVisible="{ReflectionBinding SelectedLyric, Converter={x:Static ObjectConverters.IsNotNull}}"
+                      Spacing="12">
+            <!-- Title area with accent border -->
+            <Border BorderBrush="#D4610A" BorderThickness="3,0,0,0" Padding="12,0,0,0">
+              <StackPanel>
+                <TextBlock Text="{ReflectionBinding SelectedLyric.Title}"
+                           FontSize="24" FontWeight="Bold" Foreground="#F0F0F0" />
+                <TextBlock Text="{ReflectionBinding SelectedLyric.Artist}"
+                           FontSize="14" Foreground="#D4610A" Margin="0,4,0,0" />
+              </StackPanel>
+            </Border>
+
+            <!-- Action buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Background="#D4610A" Foreground="White" FontWeight="SemiBold"
+                      Padding="16,10" CornerRadius="8"
+                      Command="{ReflectionBinding PresentSelectedCommand}"
+                      ToolTip.Tip="Abrir no Projetor">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <PathIcon Data="M8 5v14l11-7z" Width="14" Height="14" />
+                  <TextBlock Text="Apresentar" FontSize="12" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+              <Button Classes="NavBtn"
+                      Width="38" Height="38"
+                      Command="{ReflectionBinding EditSelectedCommand}" ToolTip.Tip="Editar">
+                <PathIcon Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                          Width="16" Height="16" />
+              </Button>
+              <Button Classes="NavBtn"
+                      Width="38" Height="38"
+                      Command="{ReflectionBinding DeleteSelectedCommand}" ToolTip.Tip="Deletar">
+                <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                          Width="16" Height="16" Foreground="#C0392B" />
+              </Button>
+            </StackPanel>
+
+            <Rectangle Height="1" Fill="#1E1E1E" Margin="0,4" />
+
+            <TextBlock Text="{ReflectionBinding SelectedLyric.LyricText}"
+                       FontSize="15" LineHeight="28"
+                       Foreground="#DDDDDD" TextWrapping="Wrap" />
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Edit mode -->
+      <ScrollViewer Grid.Row="0" IsVisible="{ReflectionBinding IsEditing}">
+        <StackPanel Spacing="16" Margin="0,0,0,12">
+          <!-- Edit header with accent -->
+          <Border BorderBrush="#D4610A" BorderThickness="3,0,0,0" Padding="10,0,0,0">
+            <TextBlock Text="{ReflectionBinding SelectedLyric.Id, StringFormat='Editar Letra (#{0})', FallbackValue='Nova Letra'}"
+                       FontSize="18" FontWeight="SemiBold" Foreground="#F0F0F0" />
+          </Border>
+
+          <!-- Title field with label -->
+          <StackPanel Spacing="5">
+            <TextBlock Text="Título *" FontSize="11" Foreground="#888" FontWeight="Medium" />
+            <TextBox Classes="SearchBox" CornerRadius="8"
+                     Text="{ReflectionBinding EditTitle}" />
+          </StackPanel>
+
+          <!-- Artist field with label -->
+          <StackPanel Spacing="5">
+            <TextBlock Text="Artista / Ministério" FontSize="11" Foreground="#888" FontWeight="Medium" />
+            <TextBox Classes="SearchBox" CornerRadius="8"
+                     Text="{ReflectionBinding EditArtist}" />
+          </StackPanel>
+
+          <!-- Background image picker -->
+          <StackPanel Spacing="5">
+            <TextBlock Text="Imagem de fundo" FontSize="11" Foreground="#888" FontWeight="Medium" />
+            <Grid ColumnDefinitions="*,Auto">
+              <Border Grid.Column="0" Background="#1A1A1A"
+                      CornerRadius="8,0,0,8" Padding="12,0" Height="42"
+                      BorderBrush="#2E2E2E" BorderThickness="1,1,0,1">
+                <TextBlock Text="{ReflectionBinding EditBackgroundPath, FallbackValue='Sem imagem de fundo'}"
+                           Foreground="{ReflectionBinding EditBackgroundPath, Converter={x:Static conv:NullToColorConverter.Instance}}"
+                           VerticalAlignment="Center" FontSize="12"
+                           TextTrimming="CharacterEllipsis" />
+              </Border>
+              <Button Grid.Column="1" Name="BtnPickBg"
+                      Background="#2A1608" Foreground="#D4610A"
+                      Height="42" Padding="14,0" CornerRadius="0,8,8,0"
+                      BorderBrush="#D4610A" BorderThickness="1">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <PathIcon Data="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                            Width="14" Height="14" />
+                  <TextBlock Text="Escolher" VerticalAlignment="Center" FontSize="12" />
+                </StackPanel>
+              </Button>
+            </Grid>
+          </StackPanel>
+
+          <!-- Lyrics text with label -->
+          <StackPanel Spacing="5">
+            <TextBlock Text="Letra da música" FontSize="11" Foreground="#888" FontWeight="Medium" />
+            <TextBox Text="{ReflectionBinding EditText}"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     Height="380" VerticalContentAlignment="Top"
+                     Padding="14" Background="#1A1A1A" Foreground="#F0F0F0"
+                     BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="8"
+                     FontSize="14" LineHeight="24" />
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Edit buttons -->
+      <StackPanel Grid.Row="1" IsVisible="{ReflectionBinding IsEditing}"
+                  Orientation="Horizontal" Spacing="10"
+                  HorizontalAlignment="Right" Margin="0,12,0,0">
+        <Button Content="Cancelar" Command="{ReflectionBinding CancelEditCommand}"
+                Background="#1E1E1E" Foreground="#888"
+                Padding="20,11" CornerRadius="8" FontSize="13" />
+        <Button Content="Salvar" Command="{ReflectionBinding SaveEditCommand}"
+                Background="#D4610A" Foreground="White"
+                FontWeight="SemiBold" Padding="28,11" CornerRadius="8" FontSize="13" />
+      </StackPanel>
+
+    </Grid>
+  </Grid>
+</UserControl>
